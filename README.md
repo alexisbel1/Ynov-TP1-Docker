@@ -53,6 +53,8 @@ Cette API communique avec une base de données MongoDB afin de stocker les utili
 
 Il faudra réutiliser le conteneur MongoDB précédemment déployé et connecter l'API à cette base de données.
 
+Vous pouvez démarrer le base de données MongoDB avec la commande `docker compose up`et la stopper avec `docker compose down`.
+
 **ATTENTION** : L'API ne démarrera pas si elle n'est pas connectée à un MongoDB.
 
 ### Setup de l'API
