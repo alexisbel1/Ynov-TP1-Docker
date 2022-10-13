@@ -226,7 +226,7 @@ Vous pouvez vous référer à [cette documentation de Docker](https://docs.docke
 
 ### 2) Mettre en place un mécanisme permettant de persister les données même quand le conteneur est supprimé (pensez aux volumes).
 
-### E) (Bonus) Réplication de l'API et load balancing avec un proxy NGINX
+## E) (Bonus) Réplication de l'API et load balancing avec un proxy NGINX
 
 - Créer plusieurs replica de l'API 
 - Créer un conteneur NGINX en front gérant les requêtes vers l'API et permettant de load balancer les requêtes vers les différents replica de l'API, le tout à partir d'un même hostname.
