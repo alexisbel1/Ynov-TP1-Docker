@@ -1,0 +1,39 @@
+# Image de build
+FROM node:alpine AS appBuild 
+
+# Défine le répertoire par défault
+WORKDIR /app
+# On copie le fichier de dépendance en premier
+COPY package.json . 
+# On installe les dépendances (packages) nécessaires pour builder et faire fonctionner l'application --> Cela créé le fichier node_modules
+RUN yarn install
+# On copie le reste des fichiers 
+COPY . .
+# On build l'app --> cela créé le dossier dist
+RUN yarn build
+
+
+# Image utilisée uniquement pour télécharger les dépendances de production et non celles de dev. 
+# Les dépendances des productions sont définies dans la section 'dependencies' du package.json. 
+# Celles de dev sont dans la section 'devDependencies'. Cela permet d'optimiser la taille de l'app
+FROM node:alpine AS appDependencies
+WORKDIR /app
+COPY package.json . 
+RUN yarn install --production
+
+# Image finale contenant l'application, avec une taille la plus réduite possible 
+FROM node:alpine
+WORKDIR /app
+
+# On copie les dépendances de production du stage 'appDependencies'. --chown permet de dire que le user 'node' est propriétaire des fichiers copiés
+COPY --chown=node:node --from=appDependencies /app/node_modules ./node_modules
+# On copie les dépendances de production du stage 'appBuild'
+COPY --chown=node:node --from=appBuild /app/dist ./dist
+
+# On définit le user du conteneur comme étant 'node'. 
+# Cela permet d'avoir un conteneur 'rootless', ce qui augmente la sécurité, car le user 'node' aura une limitation sur les commandes qu'il peut exécuter
+USER node
+# On spécifie que l'API tourne sur le port 3000. Ce n'est pas obligatoire, mais ça permet de documenter le conteneur.
+EXPOSE 3000
+# On définit la commande de base à exécuter au démarrage du conteneur. Cette commande permet de lancer l'API
+CMD node /app/dist/main.js

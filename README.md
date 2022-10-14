@@ -129,6 +129,8 @@ La connection à MongoDB est faite dans le fichier `src/app.module.ts` `L8`. L'i
 
 - Chercher sur internet la commande permettant de configurer une variable d'environnement sous Linux.
 
+```export MONGODB_URI="<VALEUR>"```
+
 #### Tester l'API
 
 Une fois démarrée, l'API est accessible à l'adresse suivante : http://localhost:3000.
@@ -216,6 +218,8 @@ L'image précédemment créée est fonctionnelle, mais peut êre optimiser sur p
 - Ne mettre dans l'image que le strict nécessaire pour faire fonctionner l'application. Seule les dossier `dist`et `node_modules` sont nécessaire pour démarrer l'application.
 - Réduire au maximum les privilèges de l'utilisateur configurer dans l'image (pas de root). Pour cela vous pouvez utiliser [la directive `USER`](https://docs.docker.com/engine/reference/builder/#user)
 
+Voir les commentaires dans le `Dockerfile`
+
 #### d) Partager l'image sur le Dockerhub
 
 Créer vous un compte sur le DockerHub et partagez l'image que vous avez créé. 
@@ -226,7 +230,12 @@ Vous pouvez vous référer à [cette documentation de Docker](https://docs.docke
 
 ### 1) Supprimer le conteneur MongoDB et le récréer. Qu'est il arrivé aux données et pourquoi ?
 
+Les données d'un conteneur sont versatiles, elles sont supprimées quand le conteneur est supprimé. Il est nécessaire de mettre en place un volume qui va persister les données les données une fois le conteneur supprimé. 
+
+Le conteneur va monter ce volume à chaque fois qu'il démarrera, ce qui lui permettra de récupérer les données de l'ancien conteneur.
 ### 2) Mettre en place un mécanisme permettant de persister les données même quand le conteneur est supprimé (pensez aux volumes).
+
+Voir le `docker-compose.yaml`
 
 ## E) (Bonus) Réplication de l'API et load balancing avec un proxy NGINX
 

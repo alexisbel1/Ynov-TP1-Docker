@@ -1,12 +1,25 @@
-# Use root/example as user/password credentials
 version: '3.1'
 
 services:
+
+  # Conteneur MongoDB
   mongo:
-    image: mongo
+    image: mongo # Correspond à l'image mongo du DockerHub : https://hub.docker.com/_/mongo
+    volumes:
+      - db:/data/db # Les données des bases de données de MongoDB sont stockées dans le répertoire /data/db. Il faut donc monter un volume sur cet emplacement. 
     restart: always
     ports:
-      - 27017:27017
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
+      - 27017:27017 # On expose le port de MongoDB afin de le rendre accessible depuis l'host. Cela permettra de s'y connecter avec un client lourd comme Compass.
+    environment: # Variables d'environnement permettant l'initialisation du user de base. Les valeurs sont récupérées dans le fichier .env
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME} 
       MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+  
+  api: # API NodeJS
+    image: myapi:dev # Image qui a été précédemment construite
+    ports:
+      - 3000:3000 # On expose le port 3000 qui correspond au port de l'API afin de la rendre accessible depuis l'host.
+    environment:
+      MONGODB_URI: "mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@mongo:27017"  # On définit la variable d'environnement permettant de se connecter à MongoDB 
+
+volumes:
+  db:
